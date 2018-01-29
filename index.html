@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="background: #abc7b3;">
+<div id="donut1"></div>
+<div id="donut2"></div>
+<div id="donut3"></div>
+<button id="redraw1">redraw</button>
+</body>
+<script src="DonutChart.js"></script>
+<script>
+
+    var chart1 = new DonutChart({
+        id: 'donut1',
+        radius: 100,
+        percentage: 90,
+        lineWidth: 3,
+        lineColor: "#003951",
+        backgroundColor: "#fff"
+    });
+    var chart2 = new DonutChart({
+        id: 'donut2',
+        radius: 70,
+        percentage: 70,
+        lineWidth: 12,
+        lineColor: "#968eff",
+        backgroundColor: "#dad398"
+    });
+    var chart3 = new DonutChart({
+        id: 'donut3',
+        radius: 50,
+        percentage: 100,
+        lineWidth: 5,
+        lineColor: "#ffeadf",
+        fontColor: "#ffeadf"
+    });
+
+    document.getElementById('redraw1').onclick = function () {
+        chart1.redraw();
+        chart2.redraw();
+        chart3.redraw();
+    };
+</script>
+</html>
