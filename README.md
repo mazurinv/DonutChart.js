@@ -1,5 +1,7 @@
 # DonutChart.js
 Tiny JS library to draw animated donut charts
+## DEMO PAGE
+[link](http://mazurinv.ru/demo/DonutChart/)
 ## Installation
 
 just include DonutChart.js to your page
