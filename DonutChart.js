@@ -32,14 +32,17 @@ DonutChart.prototype.defaultParams = {
     id: 'donutChart',
     radius: 100,
     percentage: 90,
-    speed: .3,
+    speed: 1,
     lineWidth: 3,
     lineColor: "#003951",
     fontColor: "#003951",
     backLineColor: "transparent",
     backgroundColor: "transparent",
     pointer: undefined,
-    pointerWidth: 30
+    pointerWidth: 30,
+    header: "",
+    suffix: "%",
+    value: undefined
 };
 DonutChart.prototype.redraw = function () {
     this.properties.curr = 0;
@@ -48,14 +51,33 @@ DonutChart.prototype.redraw = function () {
 DonutChart.prototype.draw = function() {
     var wrapper = document.getElementById(this.params.id);
     var fontSize = this.params.radius / 2 ;
-    var top = (this.params.radius - fontSize) * 0.5 + this.params.lineWidth
-    var width = (this.params.radius + this.params.lineWidth) * 2;
-    var styles = 'style="position:absolute;color:'+this.params.fontColor+';font-size:'+fontSize+'px;text-align:center;top:'+top+'px;width:'+width+'px;"';
-    wrapper.innerHTML = "<p id='"+this.params.id+"_text' "+styles+">"+this.params.percentage+"%</p><canvas id='"+this.params.id+"_canvas'></canvas>";
+    var headerSize = this.params.radius / 6 ;
+
+    var w = this.params.pointer !== undefined && this.params.pointerWidth > this.params.lineWidth
+      ? this.params.pointerWidth
+      : this.params.lineWidth;
+    var width = (this.params.radius + w) * 2;
+
+    this.properties.center = {
+      x: this.params.radius + w,
+      y: this.params.radius + w
+    }
+    var top = this.properties.center.y - fontSize;
+    if (this.params.header.length) {
+      top = top + headerSize;
+    }
+
+    var html = ''
+    html += "<div class='donutChart_title' style='position:absolute;text-align:center;top:"+top+"px;width:"+width+"px;'>"
+    html += "<span class='donutChart_title_header' style='color:"+this.params.fontColor+";font-size:"+headerSize+"px;'>" + this.params.header + "</span><br/>";
+    html += "<span id='"+this.params.id+"_text' style='color:"+this.params.fontColor+";font-size:"+fontSize+"px;'>"+this.params.percentage+this.params.suffix+"</span>"
+    html += "</div>"
+    html += "<canvas id='"+this.params.id+"_canvas'></canvas>";
+    wrapper.innerHTML = html
 
     this.properties.ctx = document.getElementById(this.params.id+"_canvas").getContext('2d');
     this.properties.canvasWidth = width;
-    this.properties.canvasHeight = (this.params.radius + this.params.lineWidth) * 2;
+    this.properties.canvasHeight = width;
     document.getElementById(this.params.id+'_canvas').setAttribute("width", this.properties.canvasWidth);
     document.getElementById(this.params.id+'_canvas').setAttribute("height", this.properties.canvasHeight);
     document.getElementById(this.params.id).style.position = "relative";
@@ -78,7 +100,7 @@ DonutChart.prototype.getColour = function(ctx, colour) {
   }
   var grd
   var gradientColours = colour.split(":")
-  grd = ctx.createRadialGradient(0, 0, this.params.radius*1, 0, 0, this.params.radius*2);
+  grd = ctx.createRadialGradient(this.params.radius*2, this.params.radius*2, this.params.radius/10, this.params.radius*2, this.params.radius*2, this.params.radius*2);
   grd.addColorStop(0, gradientColours[0]);
   grd.addColorStop(1, gradientColours[1]);
   return grd
@@ -91,8 +113,8 @@ DonutChart.prototype.animate = function (draw_to) {
     if (this.params.backgroundColor !== 'transparent') {
         ctx.beginPath();
         ctx.arc(
-            this.params.radius+this.params.lineWidth, // x
-            this.params.radius+this.params.lineWidth, // y
+            this.properties.center.x, // x
+            this.properties.center.y, // y
             this.params.radius-this.params.lineWidth / 2, // radius
             0, // angle from
             Math.PI * 2, // angle to
@@ -104,8 +126,8 @@ DonutChart.prototype.animate = function (draw_to) {
     if (this.params.backLineColor !== 'transparent') {
         ctx.beginPath();
         ctx.arc(
-          this.params.radius+this.params.lineWidth,
-          this.params.radius+this.params.lineWidth,
+          this.properties.center.x, // x
+          this.properties.center.y, // y
           this.params.radius,
           0,
           Math.PI * 2,
@@ -120,8 +142,8 @@ DonutChart.prototype.animate = function (draw_to) {
 
     ctx.beginPath();
     ctx.arc(
-        this.params.radius+this.params.lineWidth,
-        this.params.radius+this.params.lineWidth,
+      this.properties.center.x, // x
+      this.properties.center.y, // y
         this.params.radius,
         -Math.PI/2,
         draw_to,
@@ -136,11 +158,10 @@ DonutChart.prototype.animate = function (draw_to) {
     if (this.params.pointer !== undefined) {
       var w = this.params.pointerWidth;
       var h = this.params.pointerWidth * this.params.imageRatio
-      console.log(w,h)
       ctx.drawImage(
         this.properties.img,
-        (this.params.radius) * (1 + Math.cos(draw_to)) - w / 2 + this.params.lineWidth,
-        (this.params.radius ) * (1 + Math.sin(draw_to)) - h / 2 + this.params.lineWidth,
+        this.properties.center.x + this.params.radius * Math.cos(draw_to) - this.params.pointerWidth / 2,
+        this.properties.center.y + this.params.radius * Math.sin(draw_to) - this.params.pointerWidth / 2,
         w,
         h
       );
@@ -161,7 +182,8 @@ DonutChart.prototype.animate = function (draw_to) {
             }
             if (instance.properties.curr <= instance.params.percentage) {
                 instance.properties.frameTime = frameTime;
-                document.getElementById(instance.params.id+'_text').innerHTML = Math.ceil(instance.properties.curr) + '%'
+                var title = instance.params.value !== undefined ? (instance.params.value * Math.ceil(instance.properties.curr / instance.params.percentage * 100) / 100) : Math.ceil(instance.properties.curr);
+                document.getElementById(instance.params.id+'_text').innerHTML = title + instance.params.suffix
                 instance.animate(2 * Math.PI / 100 * instance.properties.curr - Math.PI / 2);
             }
         }

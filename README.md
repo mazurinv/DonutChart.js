@@ -10,31 +10,31 @@ just include DonutChart.js to your page
 ```
 
 ## Usage
-to init instance of Donut Chart you must add DIV element to your page with ID param set.
-Let the ID be #DonutChart.
+Initialize instance of the Donut Chart. You should add DIV element to your page with ID param set.
+Let the ID to be #DonutChart.
 ```
 <div id="DonutChart"></div>
 ```
-And in JS part of your code:
+And put the code below to JS part of your application:
 ```
 var chart1 = new DonutChart({
-        id: 'DonutChart',
-        radius: 100,
-        percentage: 90,
-        lineWidth: 3,
-        lineColor: "#003951",
-        backgroundColor: "#fff"
+        id: 'donut1', // id of div element
+        radius: 100, // radius of the circle
+        percentage: 60, // how many percents you need to display
+        lineWidth: 9, // width of the percentage line
+        lineColor: "#345:rgb(44, 127, 211)", // colour of the percentage line
+        // may be a gradient colour if you pass two colours divided by colon
+
+        backLineColor: "orange:red", // colour of the background of percentage line
+        fontColor: "rgb(44, 127, 211)",
+        pointer: './pointer.png', // path to pointer image
+        header: 'percents', // title above the percentage line
+        speed:.5, // animation speed
+        suffix:" rpm", // suffix of the donut value. "%" by default
+        value: 900, // value to show. percents by default
     });
 ```
-Where:
-```
-id              - element ID in DOM (#donutChart by default) 
-radius          - radius of the chart
-percentage      - percents to draw on the chart
-lineWidth       - width of the percentage line
-lineColor       - color of the percentage line
-backgroundColor - background color of the chart (transparent by default)
-```
+
 
 To redraw your chart you can use redraw method like this:
 

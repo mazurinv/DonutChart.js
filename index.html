@@ -16,22 +16,27 @@
     var chart1 = new DonutChart({
         id: 'donut1',
         radius: 100,
-        percentage: 70,
+        percentage: 60,
         lineWidth: 9,
         lineColor: "#345:rgb(44, 127, 211)",
         backLineColor: "orange:red",
         fontColor: "rgb(44, 127, 211)",
         pointer: './pointer.png',
+        header: 'percents',
         speed:.5
     });
+
     var chart2 = new DonutChart({
         id: 'donut2',
-        radius: 80,
-        percentage: 5,
-        lineWidth: 90,
-        speed: .1,
+        radius: 90,
+        percentage: 35,
+        lineWidth: 5,
+        speed: .3,
         lineColor: "#968eff",
-        backgroundColor: "#dad398"
+        backgroundColor: "#dad398",
+        suffix:" rpm",
+        value: 900,
+        header: "revolutions"
     });
     var chart3 = new DonutChart({
         id: 'donut3',
