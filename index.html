@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
 </head>
-<body style="background: #abc7b3;">
+<body style="font-family: 'Inconsolata', monospace;">
 <div id="donut1"></div>
 <div id="donut2"></div>
 <div id="donut3"></div>
@@ -15,16 +16,20 @@
     var chart1 = new DonutChart({
         id: 'donut1',
         radius: 100,
-        percentage: 90,
-        lineWidth: 3,
-        lineColor: "#003951",
-        backgroundColor: "#fff"
+        percentage: 70,
+        lineWidth: 9,
+        lineColor: "#345:rgb(44, 127, 211)",
+        backLineColor: "orange:red",
+        fontColor: "rgb(44, 127, 211)",
+        pointer: './pointer.png',
+        speed:.5
     });
     var chart2 = new DonutChart({
         id: 'donut2',
-        radius: 70,
-        percentage: 70,
-        lineWidth: 12,
+        radius: 80,
+        percentage: 5,
+        lineWidth: 90,
+        speed: .1,
         lineColor: "#968eff",
         backgroundColor: "#dad398"
     });
@@ -33,8 +38,8 @@
         radius: 50,
         percentage: 100,
         lineWidth: 5,
-        lineColor: "#ffeadf",
-        fontColor: "#ffeadf"
+        lineColor: "#efcacf",
+        fontColor: "#8c8"
     });
 
     document.getElementById('redraw1').onclick = function () {
