@@ -62,15 +62,18 @@ DonutChart.prototype.draw = function() {
       x: this.params.radius + w,
       y: this.params.radius + w
     }
-    var top = this.properties.center.y - fontSize;
+    var top = this.properties.center.y - fontSize/2;
     if (this.params.header.length) {
-      top = top + headerSize;
+      top = top - headerSize / 2;
     }
 
+    wrapper.style.width = width+"px"
     var html = ''
     html += "<div class='donutChart_title' style='position:absolute;text-align:center;top:"+top+"px;width:"+width+"px;'>"
-    html += "<span class='donutChart_title_header' style='color:"+this.params.fontColor+";font-size:"+headerSize+"px;'>" + this.params.header + "</span><br/>";
-    html += "<span id='"+this.params.id+"_text' style='color:"+this.params.fontColor+";font-size:"+fontSize+"px;'>"+this.params.percentage+this.params.suffix+"</span>"
+    if (this.params.header.length) {
+      html += "<span class='donutChart_title_header' style='color:"+this.params.fontColor+";font-size:"+headerSize+"px;'>" + this.params.header + "</span><br/>";
+    }
+    html += "<span id='"+this.params.id+"_text' style='line-height: normal;color:"+this.params.fontColor+";font-size:"+fontSize+"px;'>"+this.params.percentage+this.params.suffix+"</span>"
     html += "</div>"
     html += "<canvas id='"+this.params.id+"_canvas'></canvas>";
     wrapper.innerHTML = html

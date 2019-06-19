@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+    <link href="./prism.css" rel="stylesheet">
+    <script type="text/javascript" src="./prism.js"></script>
+</head>
+<body style="font-family: 'Inconsolata', monospace; background:rgb(252, 231, 221);">
+  <div class="container" style="background:white;">
+    <div class="row">
+      <div class="col">
+        <h1 class="text-center mt-5">Donut Chart Demo Page</h1>
+        <p class="text-center">By <a target="_blank" href="http://mazurinv.ru">Vladimir Mazurin</a>
+        <a href="https://github.com/mazurinv/DonutChart.js" target="_blank" class="btn btn-sm btn-default" type="button" name="button">GitHub</a>
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center">
+        <h4>With custom speed, gradients, header and pointer</h4>
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+        <div id="donut1" class="m-3"></div>
+        <button class="btn btn-danger" id="redraw1">redraw</button>
+      </div>
+      <div class="col-md-6">
+        <input style="width:100%;" value="<div id='donut1'></div>">
+        <pre><code class="language-js">
+          var chart1 = new DonutChart({
+              id: 'donut1',
+              radius: 100,
+              percentage: 60,
+              lineWidth: 9,
+              lineColor: "#345:rgb(44, 127, 211)",
+              backLineColor: "orange:red",
+              fontColor: "rgb(44, 127, 211)",
+              pointer: './pointer.png',
+              header: 'percents',
+              speed:.5
+          });
+        </code></pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-5">
+        <h4>With custom suffix, absolute value (not percents), background.</h4>
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+        <div id="donut2" class="m-3"></div>
+        <button class="btn btn-danger" id="redraw2">redraw</button>
+      </div>
+      <div class="col-md-6">
+        <input style="width:100%;" value="<div id='donut2'></div>">
+        <pre><code class="language-js">
+          var chart2 = new DonutChart({
+              id: 'donut2',
+              radius: 90,
+              percentage: 35,
+              lineWidth: 2,
+              speed: .3,
+              lineColor: "#345",
+              backgroundColor: "#eec",
+              backLineColor: "#eec",
+              suffix:" rpm",
+              value: 900,
+              header: "revolutions"
+          });
+        </code></pre>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-5">
+        <h4>Minimal</h4>
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+        <div id="donut3" class="m-3"></div>
+        <button class="btn btn-danger" id="redraw3">redraw</button>
+      </div>
+      <div class="col-md-6">
+        <input style="width:100%;" value="<div id='donut3'></div>">
+        <pre><code class="language-js">
+          var chart3 = new DonutChart({
+              id: 'donut3',
+          });
+        </code></pre>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-5">
+        <h4>Redraw button</h4>
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+        <div id="donut3" class="m-3"></div>
+        <button class="btn btn-danger" id="redraw">redraw</button>
+      </div>
+      <div class="col-md-6">
+        <input style="width:100%;" value='<button id="redraw">redraw</button>'>
+        <pre><code class="language-js">
+          document.getElementById('redraw').onclick = function () {
+              chart1.redraw();
+              chart2.redraw();
+              chart3.redraw();
+          };
+        </code></pre>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="../DonutChart.js"></script>
+<script>
+
+    var chart1 = new DonutChart({
+        id: 'donut1',
+        radius: 100,
+        percentage: 60,
+        lineWidth: 9,
+        lineColor: "#345:rgb(44, 127, 211)",
+        backLineColor: "orange:red",
+        fontColor: "rgb(44, 127, 211)",
+        pointer: './pointer.png',
+        header: 'percents',
+        speed:.5
+    });
+
+    var chart2 = new DonutChart({
+        id: 'donut2',
+        radius: 90,
+        percentage: 35,
+        lineWidth: 2,
+        speed: .3,
+        lineColor: "#345",
+        backgroundColor: "#eec",
+        backLineColor: "#eec",
+        suffix:" rpm",
+        value: 900,
+        header: "revolutions"
+    });
+    var chart3 = new DonutChart({
+        id: 'donut3',
+    });
+
+    document.getElementById('redraw').onclick = function () {
+        chart1.redraw();
+        chart2.redraw();
+        chart3.redraw();
+    };
+    document.getElementById('redraw1').onclick = function () {
+        chart1.redraw();
+    };
+    document.getElementById('redraw2').onclick = function () {
+        chart2.redraw();
+    };
+    document.getElementById('redraw3').onclick = function () {
+        chart3.redraw();
+    };
+</script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</html>
