@@ -42,13 +42,16 @@ DonutChart.prototype.defaultParams = {
     pointerWidth: 30,
     header: "",
     suffix: "%",
-    value: undefined
+    value: undefined,
+    onRedraw: function() {},
+    onAnimationEnd: function() {}
 };
 DonutChart.prototype.redraw = function () {
     this.properties.curr = 0;
     this.draw()
 };
 DonutChart.prototype.draw = function() {
+    this.params.onRedraw();
     var wrapper = document.getElementById(this.params.id);
     var fontSize = this.params.radius / 2 ;
     var headerSize = this.params.radius / 6 ;
@@ -181,13 +184,15 @@ DonutChart.prototype.animate = function (draw_to) {
         for (var key in DonutChart.prototype.instances) {
             var instance = DonutChart.prototype.instances[key];
             if (instance.properties.frameTime === frameTime) {
-                return;
+              return;
             }
             if (instance.properties.curr <= instance.params.percentage) {
                 instance.properties.frameTime = frameTime;
                 var title = instance.params.value !== undefined ? (instance.params.value * Math.ceil(instance.properties.curr / instance.params.percentage * 100) / 100) : Math.ceil(instance.properties.curr);
                 document.getElementById(instance.params.id+'_text').innerHTML = title + instance.params.suffix
                 instance.animate(2 * Math.PI / 100 * instance.properties.curr - Math.PI / 2);
+            } else {
+              instance.params.onAnimationEnd();
             }
         }
     });
