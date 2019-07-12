@@ -21,6 +21,7 @@ var DonutChart = function (params) {
     this.frameTime = -1;
     this.draw()
 };
+DonutChart.prototype.requestAnimationFrameLaunched = false;
 DonutChart.prototype.instances = {};
 DonutChart.prototype.properties = {
     ctx: undefined,
@@ -30,6 +31,7 @@ DonutChart.prototype.properties = {
 };
 DonutChart.prototype.defaultParams = {
     id: 'donutChart',
+    type: 'percentage', // percentage or milestones
     radius: 100,
     percentage: 90,
     speed: 1,
@@ -42,9 +44,11 @@ DonutChart.prototype.defaultParams = {
     pointerWidth: 30,
     header: "",
     suffix: "%",
+    milestoneImage: "",
     value: undefined,
     onRedraw: function() {},
-    onAnimationEnd: function() {}
+    onAnimationEnd: function() {},
+    nextStep: function(step) {}
 };
 DonutChart.prototype.redraw = function () {
     this.properties.curr = 0;
@@ -89,13 +93,22 @@ DonutChart.prototype.draw = function() {
     document.getElementById(this.params.id).style.position = "relative";
 
     if (this.params.pointer !== undefined) {
-      this.properties.img = new Image();
+      this.properties.pointer = new Image();
       var that = this;
-      this.properties.img.onload = function() {
-        that.params.imageRatio = this.width / this.height;
-        that.animate();
+      this.properties.pointer.onload = function() {
+        that.params.pointerRatio = this.width / this.height;
+        if (that.params.milestoneImage !== '') {
+          that.properties.milestone = new Image();
+          that.properties.milestone.onload = function() {
+            that.params.milestoneRatio = this.width / this.height;
+            that.animate();
+          }
+          that.properties.milestone.src = that.params.milestoneImage;
+        } else {
+          that.animate();
+        }
       };
-      this.properties.img.src = this.params.pointer;
+      this.properties.pointer.src = this.params.pointer;
     } else {
       this.animate();
     }
@@ -113,9 +126,7 @@ DonutChart.prototype.getColour = function(ctx, colour) {
 }
 DonutChart.prototype.animate = function (draw_to) {
     var ctx = this.properties.ctx;
-    if (draw_to !== undefined) {
-        ctx.clearRect(0, 0, this.properties.canvasWidth, this.properties.canvasHeight);
-    }
+    ctx.clearRect(0, 0, this.properties.canvasWidth, this.properties.canvasHeight);
     if (this.params.backgroundColor !== 'transparent') {
         ctx.beginPath();
         ctx.arc(
@@ -146,13 +157,14 @@ DonutChart.prototype.animate = function (draw_to) {
         ctx.fill();
     }
 
+    // let's draw trace
     ctx.beginPath();
     ctx.arc(
       this.properties.center.x, // x
       this.properties.center.y, // y
         this.params.radius,
         -Math.PI/2,
-        draw_to,
+        (draw_to + Math.PI/2) % (2 * Math.PI) - Math.PI/2,
         false
     );
     ctx.fillStyle = 'transparent';
@@ -161,11 +173,27 @@ DonutChart.prototype.animate = function (draw_to) {
     ctx.strokeStyle = this.getColour(ctx, this.params.lineColor);
     ctx.stroke();
 
+    if (this.params.type === 'milestones' && this.properties.milestone !== undefined) {
+      // draw milestones
+      for (var i = 0; i < this.params.milestonesCount; i++) {
+        var w = this.params.pointerWidth;
+        var h = this.params.pointerWidth * this.params.milestoneRatio
+        ctx.drawImage(
+          this.properties.milestone,
+          this.properties.center.x + this.params.radius * Math.cos(2*Math.PI * i / this.params.milestonesCount - Math.PI/2) - this.params.pointerWidth / 2,
+          this.properties.center.y + this.params.radius * Math.sin(2*Math.PI * i / this.params.milestonesCount - Math.PI/2) - this.params.pointerWidth / 2,
+          w,
+          h
+        );
+      }
+    }
+
+    // draw pointer
     if (this.params.pointer !== undefined) {
       var w = this.params.pointerWidth;
-      var h = this.params.pointerWidth * this.params.imageRatio
+      var h = this.params.pointerWidth * this.params.pointerRatio
       ctx.drawImage(
-        this.properties.img,
+        this.properties.pointer,
         this.properties.center.x + this.params.radius * Math.cos(draw_to) - this.params.pointerWidth / 2,
         this.properties.center.y + this.params.radius * Math.sin(draw_to) - this.params.pointerWidth / 2,
         w,
@@ -180,19 +208,33 @@ DonutChart.prototype.animate = function (draw_to) {
         window.webkitRequestAnimationFrame ||
         window.msRequestAnimationFrame;
 
-    requestAnimationFrame(function (frameTime) {
+    requestAnimationFrame(function (frameTime, elem) {
         for (var key in DonutChart.prototype.instances) {
             var instance = DonutChart.prototype.instances[key];
             if (instance.properties.frameTime === frameTime) {
-              return;
+              continue;
             }
-            if (instance.properties.curr <= instance.params.percentage) {
+            if (instance.params.type === 'percentage') {
+              if (instance.properties.curr <= instance.params.percentage) {
+                  instance.properties.frameTime = frameTime;
+                  var title = instance.params.value !== undefined ? (instance.params.value * Math.ceil(instance.properties.curr / instance.params.percentage * 100) / 100) : Math.ceil(instance.properties.curr);
+                  document.getElementById(instance.params.id+'_text').innerHTML = title + instance.params.suffix
+                  instance.animate(2 * Math.PI / 100 * instance.properties.curr - Math.PI / 2);
+              } else {
+                instance.params.onAnimationEnd();
+                continue;
+              }
+            }
+            if (instance.params.type == 'milestones') {
                 instance.properties.frameTime = frameTime;
-                var title = instance.params.value !== undefined ? (instance.params.value * Math.ceil(instance.properties.curr / instance.params.percentage * 100) / 100) : Math.ceil(instance.properties.curr);
-                document.getElementById(instance.params.id+'_text').innerHTML = title + instance.params.suffix
+                var title = Math.ceil(instance.properties.curr % 100 / 100 * instance.params.milestonesCount);
+                var titleContainer = document.getElementById(instance.params.id+'_text')
+                var step = document.getElementById(instance.params.id+'_text').innerHTML;
+                if (title.toString() !== step && title !== 0) {
+                  document.getElementById(instance.params.id+'_text').innerHTML = title
+                  instance.params.nextStep(title);
+                }
                 instance.animate(2 * Math.PI / 100 * instance.properties.curr - Math.PI / 2);
-            } else {
-              instance.params.onAnimationEnd();
             }
         }
     });

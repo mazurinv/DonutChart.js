@@ -32,12 +32,52 @@
               radius: 100,
               percentage: 60,
               lineWidth: 9,
+              pointerWidth: 20,
               lineColor: "#345:rgb(44, 127, 211)",
               backLineColor: "orange:red",
               fontColor: "rgb(44, 127, 211)",
               pointer: './pointer.png',
               header: 'percents',
-              speed:.5
+              speed:.5,
+              onRedraw: function() {
+                //triggers on animation start
+              },
+              onAnimationEnd: function() {
+                // triggers on animation end
+              },
+          });
+        </code></pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-5">
+        <h4>Milestones</h4>
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+        <div id="donut4" class="m-3"></div>
+        <button class="btn btn-danger" id="redraw4">redraw</button>
+      </div>
+      <div class="col-md-6">
+        <input style="width:100%;" value="<div id='donut4'></div>">
+        <pre><code class="language-js">
+          var chart4 = new DonutChart({
+              id: 'donut4',
+              type: 'milestones',
+              radius: 120,
+              lineWidth: 5,
+              lineColor: "#345:rgb(44, 127, 211)",
+              backLineColor: "orange:red",
+              fontColor: "rgb(44, 127, 211)",
+              pointer: './pointer.png',
+              pointerWidth:20,
+              speed:.15,
+              milestoneImage: './milestone.png',
+              milestonesCount: 5,
+              nextStep: function(step) {
+                // triggers when pointer meets milestone
+                console.log(step)
+              }
           });
         </code></pre>
       </div>
@@ -91,6 +131,8 @@
     </div>
 
 
+
+
     <div class="row">
       <div class="col-md-12 d-flex justify-content-center mt-5">
         <h4>Redraw button</h4>
@@ -106,6 +148,7 @@
               chart1.redraw();
               chart2.redraw();
               chart3.redraw();
+              chart4.redraw();
           };
         </code></pre>
       </div>
@@ -118,20 +161,18 @@
 
     var chart1 = new DonutChart({
         id: 'donut1',
-        radius: 100,
-        percentage: 60,
-        lineWidth: 9,
         lineColor: "#345:rgb(44, 127, 211)",
         backLineColor: "orange:red",
         fontColor: "rgb(44, 127, 211)",
         pointer: './pointer.png',
         header: 'percents',
-        speed:.5
+        pointerWidth: 20,
+        speed: .7
     });
 
     var chart2 = new DonutChart({
         id: 'donut2',
-        radius: 90,
+        radius: 110,
         percentage: 35,
         lineWidth: 2,
         speed: .3,
@@ -145,11 +186,29 @@
     var chart3 = new DonutChart({
         id: 'donut3',
     });
+    var chart4 = new DonutChart({
+        id: 'donut4',
+        type: 'milestones',
+        radius: 120,
+        lineWidth: 5,
+        lineColor: "#345:rgb(44, 127, 211)",
+        backLineColor: "orange:red",
+        fontColor: "rgb(44, 127, 211)",
+        pointer: './pointer.png',
+        pointerWidth:20,
+        speed:.15,
+        milestoneImage: './milestone.png',
+        milestonesCount: 5,
+        nextStep: function(step) {
+          console.log(step)
+        }
+    });
 
     document.getElementById('redraw').onclick = function () {
         chart1.redraw();
         chart2.redraw();
         chart3.redraw();
+        chart4.redraw();
     };
     document.getElementById('redraw1').onclick = function () {
         chart1.redraw();
@@ -159,6 +218,9 @@
     };
     document.getElementById('redraw3').onclick = function () {
         chart3.redraw();
+    };
+    document.getElementById('redraw4').onclick = function () {
+        chart4.redraw();
     };
 </script>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
